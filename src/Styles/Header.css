@@ -1,0 +1,88 @@
+#header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    background-color:lightcyan;
+    font-size: 20px;
+    font-display: gh;
+    width: 100%; 
+    height:55px;
+    padding: 15px;
+  }
+  
+  #logo {
+    width: 60px;
+    margin-top: -13px;
+    margin-left: 5px;
+    height:50px
+  }
+  #logoname
+  {
+    color:red;
+    font-style: italic;
+    
+  }
+  
+  #home {
+    margin-left: 600px;
+    margin-top: 10px;
+  }
+  
+  .homeicon {
+    /* margin-left:1px; */
+  
+    margin-top: 30px;
+  }
+  
+  #aboutus {
+    margin-left: 40px;
+  
+    font-style: italic;
+  }
+  #infoicon {
+    margin-left: 6px;
+  }
+  
+  #myorder {
+    margin-left: 40px;
+  
+    font-style: italic;
+  }
+  #ordericon {
+    margin-left: 10px;
+  }
+  
+  #contactus {
+    margin-left: 40px;
+  }
+  
+  
+  #login {
+    margin-left: 65px;
+    font-style: italic;
+   
+  }
+  #loginbtn{
+ margin-top:-5px;
+   
+  }
+
+  #logoutbtn{
+    margin-top:-5px;
+      
+     }
+
+  #logout {
+    margin-left: 65px;
+    font-style: italic;
+  }
+  
+  .link {
+    color: black;
+  }
+  #container {
+    color: "pink";
+  }
+  
+ 
+  
