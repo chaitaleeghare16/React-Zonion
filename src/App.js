@@ -11,7 +11,6 @@ import HomePage from './Components/HomePage';
 import ManageRestaurant, { AddRestaurantDetails } from './Components/AddRestaurantDetails';
 import ManageRestaurantPage from './Components/ManageRestaurantPage';
 import RestaurantDetails from './Components/RestaurantDetails';
-import TimePicker from './Components/TimePicker';
 import AboutUs from './Components/AboutUs';
 import ContactUs from './Components/ContactUs';
 import UpdateRestaurant from './Components/UpdateRestaurant';
