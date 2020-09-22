@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Link,NavLink } from 'react-router-dom'
-import AdminPageHeader from './AdminPageHeader'
-import M from "materialize-css/dist/js/materialize.min.js"
+import  Header from './Header'
+
 import ApiService from '../Service/ApiService'
 
 import {TimePicker} from 'antd';
@@ -12,6 +12,7 @@ import 'antd/dist/antd.css';
 export class AddRestaurantDetails extends Component {
     constructor(props) {
         super(props)
+
         var admintoken=sessionStorage.getItem('admintoken')
         this.state = {
             isAdminLoggedIn:admintoken,
@@ -21,48 +22,121 @@ export class AddRestaurantDetails extends Component {
             OpenTime:'',
             CloseTime:'',
             PhoneNo:"",
+            Menu:"",
+            isValid:false,
             error:{
                 RestaurantNameError:'',
                 AddressError:'',
                 OpenTimeError:'',
                 CloseTimeError:'',
-                PhoneNoError:''
-            }
-            ,Menu:"",
+                PhoneNoError:'',
+                MenuError:''
+            },
+            
             restaurantDetails:{},
-            time:'00:00:00'
+            time:'00:00:00',
+            selectedFile: null,
+            url:''
            
         }
                     
         this.HandleSubmit=this.HandleSubmit.bind(this)
+        this.onFileChangeHandler =this.onFileChangeHandler.bind(this);
                     
     }
+
+
+    onFileChangeHandler = (event) => {
+        
+         //Select File
+         if (event.target.files && event.target.files[0]) {
+            this.setState({
+                //url: URL.createObjectURL(event.target.files[0])
+                selectedFile : event.target.files[0]
+            },() => console.log(this.state.selectedFile));
+          }
+
+
+        }
+    onUpload = (e,restaurantname) => {
+        e.preventDefault()
+        
+        var restaurantName = restaurantname;
+        console.log("restaurant name :"+restaurantName)
+         //FormData API provides methods and properties to allow us easily prepare form data to be sent with POST HTTP requests.
+         // Create an object of formData 
+      
+         const formData = new FormData(); 
+     
+      // Update the formData object 
+      var file = this.state.selectedFile
+      if(file==null){
+         return this.setState({error:{MenuError:'please choose file to upload'}});
+        }else{
+        formData.append( 
+        "myFile", 
+        this.state.selectedFile,
+        this.state.selectedFile.name
+      )}; 
+     formData.append("filename",this.state.selectedFile.name)
+     formData.append("restaurantname",restaurantName);
+
+      // Details of the uploaded file 
+      console.log(this.state.selectedFile); 
+      
+            //Make a call to the Spring Boot Application to save the image
+        ApiService.uploadImage(formData)
+            .then(res => {
+                if(res.status===200){
+                    this.setState({url:res.data})
+                    console.log("res"+res.data)
+                    alert('image uploaded successfully...')
+                }
+             
+            }).catch(error=>console.log(error))
+    };
+
+    fileData = () => { 
+     
+        if (this.state.selectedFile) { 
+            
+          return ( 
+            <div> 
+              <h2>File Details:</h2> 
+              <p>File Name: {this.state.selectedFile.name}</p> 
+              <p>File Type: {this.state.selectedFile.type}</p> 
+             
+              <p> 
+                Last Modified:{" "} 
+                {this.state.selectedFile.lastModifiedDate.toDateString()} 
+              </p> 
+            </div> 
+          ); 
+        } else { 
+          return ( 
+            <div> 
+              <br /> 
+              <h4>Choose before Pressing the Upload button</h4> 
+            </div> 
+          ); 
+        } 
+      }; 
+
+
     onopentimeChange=(e,time,timeString)=>
     {
         
-       if(time >= '12:00:00' )
-       {
-           console.log('greater than 12')
+    
+        this.setState({OpenTime:time},()=>console.log("open time :"+this.state.OpenTime))
        
-                this.setState({OpenTime:time+"pm"},()=>console.log("open time :"+this.state.OpenTime))
-       }
-       else{
-        this.setState({OpenTime:time+"am"},()=>console.log("open time :"+this.state.OpenTime))
-       }
     }
 
     onclosetimeChange=(e,time,timeString)=>
     {
         
-       if(time >= '12:00:00' )
-       {
-           console.log('greater than 12')
-       
-                this.setState({CloseTime:time+"pm"},()=>console.log("close time :"+this.state.CloseTime))
-       }
-       else{
-               this.setState({CloseTime:time+"am"},()=>console.log("close time :"+this.state.CloseTime))
-       }
+    
+               this.setState({CloseTime:time},()=>console.log("close time :"+this.state.CloseTime))
+       //}
     }
 
 
@@ -73,6 +147,7 @@ export class AddRestaurantDetails extends Component {
         var value=e.target.value;
         var name=e.target.name;
         
+        
         console.log(value)
         switch(name)
         {
@@ -80,10 +155,13 @@ export class AddRestaurantDetails extends Component {
             {
                 if(value.length==0)
                 {
-                    this.setState({error:{RestaurantNameError:'restaurant name should not be empty'}})
+                    this.setState({error:{RestaurantNameError:'restaurant name should not be empty'},isValid:false})
+                   
+                   
                 }
                 else{
-                    this.setState({error:{RestaurantNameError:''}})
+                    this.setState({error:{RestaurantNameError:''},isValid:true})
+                   
                  }
                 break;
 
@@ -93,10 +171,12 @@ export class AddRestaurantDetails extends Component {
             {
                 if(value.length == 0)
                 {
-                    this.setState({error:{AddressError:'address  should not be empty'}})
+                    this.setState({error:{AddressError:'address  should not be empty'},isValid:false})
+                 
                 }
                 else{
-                    this.setState({error:{AddressError:''}})
+                    this.setState({error:{AddressError:''},isValid:true})
+                    
                  }
                 break;
 
@@ -107,10 +187,12 @@ export class AddRestaurantDetails extends Component {
                 
                 if(value.length==0)
                 {
-                    this.setState({error:{OpenTimeError:'open time should not be empty'}})
+                    this.setState({error:{OpenTimeError:'open time should not be empty'},isValid:false})
+                    
                 }
                 else{
-                   this.setState({error:{OpenTimeError:''}})
+                   this.setState({error:{OpenTimeError:''},isValid:true})
+                   
                 }
                 
                 break;
@@ -123,11 +205,12 @@ export class AddRestaurantDetails extends Component {
 
                 if(value.length==0)
                 {
-                    this.setState({error:{CloseTimeError:'close time should not be empty'}})
+                    this.setState({error:{CloseTimeError:'close time should not be empty'},isValid:false})
+                    
                 }
                 else{
                    
-                        this.setState({error:{CloseTimeError:''}})
+                        this.setState({error:{CloseTimeError:''},isValid:true})
                     
                 }
                 break;
@@ -140,82 +223,82 @@ export class AddRestaurantDetails extends Component {
                 {
                     this.setState({error:{PhoneNoError:'phone number  should not be empty'}})
                 }
-                else if (value.length > 0 && !value.match(/^[0-9 ]{1,10}$/)) {
+                else if (value.length > 0 && !value.match(/^[7-9][0-9 ]{0,9}$/)) {
                     this.setState({error:{
-                        PhoneNoError: "it contains only numbers and length should be 10"},
+                        PhoneNoError: "it contains only numbers and length should be 10"},isValid:false
                     })}
                 else 
                 {
-                    this.setState({error:{PhoneNoError:''}})
+                    this.setState({error:{PhoneNoError:''},isValid:true})
                 }    
                 break;
-
-                
             }
-
             case 'Menu':
-            {
-                break;
+                {
+                    if(value.length == 0)
+                    {
+                        this.setState({error:{
+                            MenuError: "please choose file"},isValid:false
+                        })}
+                    
+                    else{
+                        this.setState({error:{
+                            MenuError: ""},isValid:false
+                        })}
+                    }
+                }
 
-            }
+                return this.state.isValid
         }
 
-        
-    }
-    componentDidMount()
-    {
-        ApiService.getRestaurantById(this.state.id).then(res=>{
-            if(res.status === 200)
-            {
-                this.setState({restaurantDetails:res.data})
-                console.log(this.state.restaurantDetails)
-            }
-            }).catch(error=>console.log(error))
-
-            this.setState({
-                RestaurantName:this.state.restaurantDetails.name
-            })
-           
-        
-    }
-
-
+    
+   
     HandleSubmit=(e)=>
     {
-       
         e.preventDefault();
-        //add data
+       if(this.state.isValid)
+       {
+       console.log(this.state.isValid)
+        //add data to database
         const data={
             name : this.state.RestaurantName,
             address:this.state.Address,
             opentime:this.state.OpenTime,
             closetime:this.state.CloseTime,
             phnno:this.state.PhoneNo,
-            Menu:this.state.Menu
+            menu:this.state.url
 
         }
         ApiService.addRestaurant(data).then(res=>{
             if(res.status == 200)
             {
                 console.log(res.data)
-                alert('data added')
+                alert('Restaurant data added successfully...')
             }
         }).catch(error=>console.log(error))
 
-        //update data
-       
+        this.setState({RestaurantName:'',
+        Address:'',
+        OpenTime:'',
+        CloseTime:'',
+        PhoneNo:'',
+        Menu:''})
     }
+    else{
+        alert('please fill all details')
+        console.log(this.state.isValid)
+    }
+     
+    }
+
     
     render() {
         if(this.state.isAdminLoggedIn){
-        
-           
-
         return (
             <div >
-                <div><AdminPageHeader/></div>
+                <div><Header/></div>
                 <div className="box" style={{marginLeft:'400px',marginTop:'20px'}}>
-        <form autoComplete="off" onSubmit={this.HandleSubmit}>
+        <form autoComplete="off">
         <div class="row">
         	<div class="col-6 offset-4">
 				
@@ -232,7 +315,7 @@ export class AddRestaurantDetails extends Component {
 		<div class="form-group row">
 			<label class="col-form-label col-4"> Address</label>
 			<div class="col-6">
-                <input type="text" class="form-control" name="Address" value={this.state.Address} onChange={this.onchange} required="required"/>
+                <textarea class="form-control" name="Address" value={this.state.Address} onChange={this.onchange} required="required"/>
             </div>        	
         </div>
         <pre style={{color:'red'}}>{this.state.error.AddressError}</pre>
@@ -243,8 +326,10 @@ export class AddRestaurantDetails extends Component {
             {/* <input type="time" id="opentime" name="opentime"  value={this.state.OpenTime} onChange={this.onchange} required="required"/> */}
             <TimePicker
                 onChange={this.onopentimeChange}
-                defaultOpenValue={moment('00:00:00', 'HH:mm:ss')}/>
-                        <label htmlFor="opentime" className="active">Open Time:</label>
+             
+                format="HH:mm" 
+                defaultValue={moment('00:00','HH:mm')}/>
+                            
             </div>        	
         </div>
         <pre style={{color:'red'}}>{this.state.error.OpenTimeError}</pre>
@@ -252,15 +337,14 @@ export class AddRestaurantDetails extends Component {
         <div class="form-group row">
 			<label class="col-form-label col-4">Close Time</label>
 			<div class="col-6">
-            {/* <input type="time" id="closetime" name="closetime"  value={this.state.CloseTime} onChange={this.onchange} required="required"/> */}
+           
             <TimePicker
             onChange={this.onclosetimeChange}
-            showTime = {{ user12hours: true }} 
-            use12Hours = {true}
+           
             format="HH:mm" 
-            defaultOpenValue={moment('00:00','HH:mm')}
+            defaultValue={moment('00:00','HH:mm')}
   />
-                        <label htmlFor="closetime" className="active">Close Time:</label>
+                        
             </div>        	
         </div>
         <pre style={{color:'red'}}>{this.state.error.CloseTimeError}</pre>
@@ -279,11 +363,14 @@ export class AddRestaurantDetails extends Component {
         <div class="form-group row">
 			<label class="col-form-label col-4">Menu</label>
 			<div class="col-6">
-                <input type="file" class="form-control" name="Menu" value={this.state.Menu} onChange={this.onchange} required="required" />
-            </div>        	
+            <input type="file" onChange={this.onFileChangeHandler}/>
+            <pre style={{color:'red'}}>{this.state.error.MenuError}</pre>
+            <button onClick={(e)=>this.onUpload(e,this.state.RestaurantName)}>Upload image</button>
+            </div>   
+              	 {this.fileData()}
         </div>
-        <pre style={{color:'red'}}>{this.state.error.PhoneNoError}</pre>
-
+       
+       
 		<div class="form-group row">
 			<div class="col-8 offset-4">
 				
@@ -294,6 +381,13 @@ export class AddRestaurantDetails extends Component {
     </form>
      </div>
 </div>
- )}}}
+ )
+}
+else{
+    return <div style={{textAlign:'center'}}>
+    <h2 style={{color:'red'}}>Only Admin Can Access !!!</h2>
+    </div>
+}}
+}
   
 export default AddRestaurantDetails

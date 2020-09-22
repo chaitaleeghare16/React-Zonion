@@ -11,6 +11,7 @@ import AddRestaurantDetails from './Components/AddRestaurantDetails';
 import ManageRestaurantPage from './Components/ManageRestaurantPage';
 
 
+
 ReactDOM.render(
   <BrowserRouter>
   

@@ -1,49 +1,18 @@
 import React from 'react'
-import sayaji_hotel from '../Images/sayaji.jpeg'
-import orchid_hotel from '../Images/orchid.jpeg'
-import ginger_hotel from '../Images/ginger.jpeg'
+
 import { Link, Redirect } from 'react-router-dom'
 import Header from './Header'
+
 import ApiService from '../Service/ApiService'
-
-
-
-
-
-    const restaurant_img_path=[" ",sayaji_hotel,orchid_hotel,ginger_hotel];
-    const Restaurants=[
-
-        {
-            restaurant_id:0,
-
-            restaurant_img_path:0,
-            restaurant_name:'Sayaji'
-
-        },
-
-        {
-            restaurant_id:1,
-            restaurant_img_path:1,
-            restaurant_name:'Orchid'
-
-        },
-
-        {
-            restaurant_id:1,
-            restaurant_img_path:2,
-            restaurant_name:'Ginger'
-
-        },
-
-
-    ]
 
 export class HomePage extends React.Component {
 constructor(props) {
+    var admintoken=sessionStorage.getItem('admintoken')
     super(props)
 
     this.state = {
-        restaurantDetails:[]
+        restaurantDetails:[],
+        isAdminLoggedIn:admintoken,
     }
 }
 
@@ -55,36 +24,48 @@ HandleImage=(hotel_id)=>
     this.props.history.push(`/restaurantdetail/${id}`)
 }
 
-    render() {
+componentWillMount()
+{
+   
+    ApiService.getRestaurant().then(res=>{
+        if(res.status === 200)
+        {
+            this.setState({restaurantDetails:res.data})
+        }
+        }).catch(error=>console.log(error))
 
+}
+
+
+
+    render() {
         var restaurantDetails=this.state.restaurantDetails
-        ApiService.getRestaurant().then(res=>{
-            if(res.status === 200)
-            {
-                this.setState({restaurantDetails:res.data})
-            }
-            }).catch(error=>console.log(error))
-        
+       
+       
         return (
             <div >
-                <div><Header/></div>
-                <div class="container" >
+                   
+                
+                <div id="header"><Header/></div>
+                <div class="container" style={{padding:'20px'}}>
                 {restaurantDetails.map(hotels=>(
                 
-                <div class="row" >
-                <div class="col-md-7">
-                <div class="thumbnail">
+                <span key={hotels.id}>
+                <span >
+                <span >
                   
                    <button onClick={()=>this.HandleImage(hotels.id)}>
-                   <img src={restaurant_img_path[hotels.id]} className="githubIcon" />
+                       
+                   <img src={hotels.menu} className="githubIcon" width="140"/>
+                   {console.log(hotels.menu)}
                    <div class="caption">
                    <p>{hotels.name}</p>
                    </div>
-                  </button>
+                  </button>{" "}
                  
-                </div>
-                </div>
-                </div>
+                </span>
+                </span>
+                </span>
                 
             )
                 )}
@@ -93,7 +74,8 @@ HandleImage=(hotel_id)=>
                 
             </div>
         )
-    }
+}
+
 }
 
 export default HomePage

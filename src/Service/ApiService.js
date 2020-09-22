@@ -34,6 +34,12 @@ class ApiService
     {
         return axios.put('http://localhost:9191/update',data)
     }
+    uploadImage(formData)
+    {
+        console.log(formData)
+        return axios.post(' http://localhost:9191/upload',formData)
+        
+    }
 
 }
 
