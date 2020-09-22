@@ -33,9 +33,9 @@ export class UpdateRestaurant extends Component {
                 OpenTimeError: '',
                 CloseTimeError: '',
                 PhoneNoError: '',
-                MenuError: ''
+                Restaurant_imgError: ''
             }
-            , Menu: "",
+            , Restaurant_img: "",
             restaurantDetails: {},
 
             selectedFile: null
@@ -74,7 +74,7 @@ export class UpdateRestaurant extends Component {
         // Update the formData object 
         var file = this.state.selectedFile
         if (file == null) {
-            return this.setState({ error: { MenuError: 'please choose file to upload' } });
+            return this.setState({ error: { Restaurant_imgError: 'please choose file to upload' } });
         } else {
             formData.append(
                 "myFile",
@@ -92,14 +92,15 @@ export class UpdateRestaurant extends Component {
         ApiService.uploadImage(formData)
             .then(res => {
                 if (res.status === 200) {
-                    this.setState({ Menu: res.data })
+                    this.setState({ Restaurant_img: res.data })
 
                     console.log("res" + res.data)
                     alert('image uploaded successfully...')
                 }
 
             }).catch(error => console.log(error))
-        console.log("Menu......" + this.state.Menu)
+        console.log("Image......" + this.state.Restaurant_img
+        )
     };
 
 
@@ -197,7 +198,7 @@ export class UpdateRestaurant extends Component {
 
     HandleSubmit = (e) => {
         console.log(this.state.RestaurantName)
-        console.log(this.state.Menu)
+        console.log(this.state.Restaurant_img)
         e.preventDefault();
         //add data
         console.log("insid submit" + this.state.isValid)
@@ -211,7 +212,7 @@ export class UpdateRestaurant extends Component {
                 opentime: this.state.OpenTime,
                 closetime: this.state.CloseTime,
                 phnno: this.state.PhoneNo,
-                menu: this.state.Menu
+                restaurant_img: this.state.Restaurant_img
 
             }
             ApiService.updateRestaurantById(data).then(res => {
@@ -228,12 +229,12 @@ export class UpdateRestaurant extends Component {
                 OpenTime: '',
                 CloseTime: '',
                 PhoneNo: '',
-                Menu: ''
+                Restaurant_img: ''
             })
         }
         else {
             console.log(this.state.isValid)
-            alert('please update with all details')
+            alert('please update with valid details')
         }
 
     }
@@ -252,7 +253,7 @@ export class UpdateRestaurant extends Component {
                     OpenTime: res.data.opentime,
                     CloseTime: res.data.closetime,
                     PhoneNo: res.data.phnno,
-                    Menu: res.data.menu
+                    Restaurant_img: res.data.restaurant_img
 
                 })
 
@@ -294,7 +295,7 @@ export class UpdateRestaurant extends Component {
                                 <div class="form-group row">
                                     <label class="col-form-label col-4"> Address</label>
                                     <div class="col-6">
-                                        <textarea class="form-control" name="Address" value={this.state.Address} onChange={this.onchange} required="required" />
+                                        <textarea class="form-control" name="Address" cols="30" rows="10" value={this.state.Address} onChange={this.onchange} required="required" />
                                     </div>
                                 </div>
                                 <pre style={{ color: 'red' }}>{this.state.error.AddressError}</pre>
@@ -350,10 +351,10 @@ export class UpdateRestaurant extends Component {
 
 
                                 <div class="form-group row">
-                                    <label class="col-form-label col-4">Menu</label>
+                                    <label class="col-form-label col-4">Restaurant_Image</label>
                                     <div class="col-6">
-                                        <input type="file" name="Menu" onChange={(event) => this.onFileChangeHandler(event)} />
-                                        <pre style={{ color: 'red' }}>{this.state.error.MenuError}</pre>
+                                        <input type="file" name="Restaurant_img" onChange={(event) => this.onFileChangeHandler(event)} />
+                                        <pre style={{ color: 'red' }}>{this.state.error.Restaurant_imgError}</pre>
                                         <button onClick={(e) => this.onUpload(e, this.state.RestaurantName)}>Upload image</button>
                                     </div>
 

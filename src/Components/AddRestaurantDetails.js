@@ -22,6 +22,7 @@ export class AddRestaurantDetails extends Component {
             OpenTime: '',
             CloseTime: '',
             PhoneNo: "",
+            Restaurant_img: "",
             Menu: "",
             isValid: false,
             error: {
@@ -30,6 +31,7 @@ export class AddRestaurantDetails extends Component {
                 OpenTimeError: '',
                 CloseTimeError: '',
                 PhoneNoError: '',
+                Restaurant_imgError: "",
                 MenuError: ''
             },
 
@@ -47,11 +49,11 @@ export class AddRestaurantDetails extends Component {
 
 
     onFileChangeHandler = (event) => {
-
+        event.preventDefault();
         //Select File
         if (event.target.files && event.target.files[0]) {
             this.setState({
-                //url: URL.createObjectURL(event.target.files[0])
+
                 selectedFile: event.target.files[0]
             }, () => console.log(this.state.selectedFile));
         }
@@ -71,7 +73,7 @@ export class AddRestaurantDetails extends Component {
         // Update the formData object 
         var file = this.state.selectedFile
         if (file == null) {
-            return this.setState({ error: { MenuError: 'please choose file to upload' } });
+            return this.setState({ error: { Restaurant_imgError: 'please choose file to upload' } });
         } else {
             formData.append(
                 "myFile",
@@ -95,33 +97,35 @@ export class AddRestaurantDetails extends Component {
                 }
 
             }).catch(error => console.log(error))
+
+
     };
 
-    fileData = () => {
+    // fileData = () => {
 
-        if (this.state.selectedFile) {
+    //     if (this.state.selectedFile) {
 
-            return (
-                <div>
-                    <h2>File Details:</h2>
-                    <p>File Name: {this.state.selectedFile.name}</p>
-                    <p>File Type: {this.state.selectedFile.type}</p>
+    //         return (
+    //             <div>
+    //                 <h2>File Details:</h2>
+    //                 <p>File Name: {this.state.selectedFile.name}</p>
+    //                 <p>File Type: {this.state.selectedFile.type}</p>
 
-                    <p>
-                        Last Modified:{" "}
-                        {this.state.selectedFile.lastModifiedDate.toDateString()}
-                    </p>
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                    <br />
-                    <h4>Choose before Pressing the Upload button</h4>
-                </div>
-            );
-        }
-    };
+    //                 <p>
+    //                     Last Modified:{" "}
+    //                     {this.state.selectedFile.lastModifiedDate.toDateString()}
+    //                 </p>
+    //             </div>
+    //         );
+    //     } else {
+    //         return (
+    //             <div>
+    //                 <br />
+    //                 <h4>Choose before Pressing the Upload button</h4>
+    //             </div>
+    //         );
+    //     }
+    // };
 
 
     onopentimeChange = (e, time, timeString) => {
@@ -218,7 +222,7 @@ export class AddRestaurantDetails extends Component {
                     else if (value.length > 0 && !value.match(/^[7-9][0-9 ]{0,9}$/)) {
                         this.setState({
                             error: {
-                                PhoneNoError: "it contains only numbers and length should be 10"
+                                PhoneNoError: "phone num contains only numbers,should start from (7,8,9) and length should be 10"
                             }, isValid: false
                         })
                     }
@@ -227,24 +231,7 @@ export class AddRestaurantDetails extends Component {
                     }
                     break;
                 }
-            case 'Menu':
-                {
-                    if (value.length == 0) {
-                        this.setState({
-                            error: {
-                                MenuError: "please choose file"
-                            }, isValid: false
-                        })
-                    }
 
-                    else {
-                        this.setState({
-                            error: {
-                                MenuError: ""
-                            }, isValid: false
-                        })
-                    }
-                }
         }
 
         return this.state.isValid
@@ -263,7 +250,7 @@ export class AddRestaurantDetails extends Component {
                 opentime: this.state.OpenTime,
                 closetime: this.state.CloseTime,
                 phnno: this.state.PhoneNo,
-                menu: this.state.url
+                restaurant_img: this.state.url
 
             }
             ApiService.addRestaurant(data).then(res => {
@@ -279,7 +266,7 @@ export class AddRestaurantDetails extends Component {
                 OpenTime: '',
                 CloseTime: '',
                 PhoneNo: '',
-                Menu: ''
+                Restaurant_img: ''
             })
         }
         else {
@@ -352,21 +339,23 @@ export class AddRestaurantDetails extends Component {
                             <div class="form-group row">
                                 <label class="col-form-label col-4">Phone No.</label>
                                 <div class="col-6">
-                                    <input type="text" class="form-control" name="PhoneNo" value={this.state.PhoneNo} onChange={this.onchange} required="required" />
+                                    <input type="text" class="form-control" length="10" name="PhoneNo" value={this.state.PhoneNo} onChange={this.onchange} required="required" />
                                 </div>
                             </div>
                             <pre style={{ color: 'red' }}>{this.state.error.PhoneNoError}</pre>
 
 
                             <div class="form-group row">
-                                <label class="col-form-label col-4">Menu</label>
+                                <label class="col-form-label col-4">Restaurant Image</label>
                                 <div class="col-6">
                                     <input type="file" onChange={this.onFileChangeHandler} />
-                                    <pre style={{ color: 'red' }}>{this.state.error.MenuError}</pre>
+                                    <pre style={{ color: 'red' }}>{this.state.error.Restaurant_imgError}</pre>
                                     <button onClick={(e) => this.onUpload(e, this.state.RestaurantName)}>Upload image</button>
                                 </div>
-                                {this.fileData()}
+                                {/* {this.fileData()} */}
                             </div>
+
+
 
 
                             <div class="form-group row">

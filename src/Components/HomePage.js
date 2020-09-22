@@ -53,7 +53,7 @@ export class HomePage extends React.Component {
 
                                     <button onClick={() => this.HandleImage(hotels.id)}>
 
-                                        <img src={hotels.menu} className="githubIcon" width="140" />
+                                        <img src={hotels.restaurant_img} className="githubIcon" width="140" />
                                         {console.log(hotels.menu)}
                                         <div class="caption">
                                             <p>{hotels.name}</p>

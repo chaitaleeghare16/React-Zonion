@@ -26,6 +26,7 @@ export class ManageRestaurantPage extends Component {
 
     HandleDelete = (event, id) => {
         event.preventDefault();
+        window.location.reload();
         var id = id;
         if (this.state.isAdminLoggedIn) {
             ApiService.deleteRestaurantById(id).then(res => {

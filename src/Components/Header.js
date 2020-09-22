@@ -31,7 +31,7 @@ export class Header extends Component {
                 {
                     this.state.isAdminLoggedIn ?
                         <span id='logout'>
-                            <Link to='/managerestaurant' id="goback">Go Back</Link>
+                            <Link to='/managerestaurant' id="goback">ManageResturant</Link>
                             <Link to='/logout' id="logoutbtn" className="btn btn-danger">Logout</Link>
 
                         </span> : <span id='login'>

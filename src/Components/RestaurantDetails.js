@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
+
 import Header from './Header'
 import ApiService from '../Service/ApiService'
 import '../Styles/RestaurantDetails.css'
-import sentosa from '../Images/sentosa.jpg'
 
 export class RestaurantDetails extends Component {
 
