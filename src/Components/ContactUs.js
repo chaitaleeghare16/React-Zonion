@@ -5,7 +5,7 @@ export class ContactUs extends Component {
     render() {
         return (
             <div>
-                <div><Header/></div>
+                <div><Header /></div>
                 contact us
             </div>
         )

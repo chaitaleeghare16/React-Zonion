@@ -14,8 +14,8 @@ import ManageRestaurantPage from './Components/ManageRestaurantPage';
 
 ReactDOM.render(
   <BrowserRouter>
-  
-   <App/>
+
+    <App />
   </BrowserRouter>,
   document.getElementById('root')
 );
