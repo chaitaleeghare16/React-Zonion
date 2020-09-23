@@ -8,7 +8,7 @@ export class AdminLogin extends Component {
 
   constructor(props) {
     super(props);
-
+    //define state 
     this.state = {
       username: "",
       password: "",
@@ -21,20 +21,19 @@ export class AdminLogin extends Component {
     }
   }
 
+  //method called on input change
   OnChange = (e) => {
 
     this.setState({ [e.target.name]: e.target.value })
     var name = e.target.name;
     var value = e.target.value;
-
+    //perform validation on input data enter by user
     switch (name) {
       case 'username':
         if (value.length == 0) {
           this.setState({
             error: { usernameerror: "username should not be empty" }
           });
-
-
 
         }
 
@@ -54,7 +53,7 @@ export class AdminLogin extends Component {
 
 
 
-
+  //called on submit of login form 
   submitForm = (e) => {
 
     e.preventDefault();
@@ -63,20 +62,20 @@ export class AdminLogin extends Component {
       username: this.state.username,
       password: this.state.password
     }
-
-    console.log(data)
+    //give call to API to check user is admin or not
     ApiService.checkIsAdmin(data).then(res => {
       if (res.status === 200) {
+        //after succeesful login of admin, session for admin set to true
         sessionStorage.setItem('admintoken', true)
 
         this.setState({ isAdmin: res.data })
-        console.log(this.state.isAdmin)
+        //redirect the admin to ManageRestaurant Component
         this.props.history.push('/managerestaurant')
       }
 
     }).catch(error => {
-      console.log('username and password mismatch or user is not admin')
-      alert('only admin can login or check credentials')
+      console.log(error => console.log(error))
+      alert('Error : only admin can login or check correct credentials')
     })
 
     this.setState({
@@ -84,7 +83,7 @@ export class AdminLogin extends Component {
       password: ''
     })
   }
-
+  //show details of restaurant to admin and admin can perform edit and delete operation 
   render() {
     return (
       <div style={{ textAlign: 'center' }}>

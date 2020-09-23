@@ -1,9 +1,7 @@
 import React, { Component } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import Header from './Header'
-
 import ApiService from '../Service/ApiService'
-
 import { TimePicker } from 'antd';
 import moment from 'moment';
 import 'antd/dist/antd.css';
@@ -36,113 +34,61 @@ export class AddRestaurantDetails extends Component {
             },
 
             restaurantDetails: {},
-            time: '00:00:00',
+            time: '00:00',
             selectedFile: null,
             url: ''
 
         }
-
-        this.HandleSubmit = this.HandleSubmit.bind(this)
-        this.onFileChangeHandler = this.onFileChangeHandler.bind(this);
-
     }
 
-
-    onFileChangeHandler = (event) => {
+    //call on change restaurant image chang eevent
+    onFileChangeHandler1 = (event, restaurantname) => {
         event.preventDefault();
         //Select File
+
         if (event.target.files && event.target.files[0]) {
-            this.setState({
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.setState({ Restaurant_img: e.target.result }, () => console.log(this.state.Restaurant_img));
 
-                selectedFile: event.target.files[0]
-            }, () => console.log(this.state.selectedFile));
+            }
+            reader.readAsDataURL(event.target.files[0]);
         }
-
-
     }
-    onUpload = (e, restaurantname) => {
-        e.preventDefault()
 
-        var restaurantName = restaurantname;
-        console.log("restaurant name :" + restaurantName)
-        //FormData API provides methods and properties to allow us easily prepare form data to be sent with POST HTTP requests.
-        // Create an object of formData 
+    // call on change menu image chang eevent
+    onFileChangeHandler2 = (event, restaurantname) => {
+        event.preventDefault();
+        //Select File
 
-        const formData = new FormData();
+        if (event.target.files && event.target.files[0]) {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.setState({ Menu: e.target.result }, () => console.log(this.state.Menu));
 
-        // Update the formData object 
-        var file = this.state.selectedFile
-        if (file == null) {
-            return this.setState({ error: { Restaurant_imgError: 'please choose file to upload' } });
-        } else {
-            formData.append(
-                "myFile",
-                this.state.selectedFile,
-                this.state.selectedFile.name
-            )
-        };
-        formData.append("filename", this.state.selectedFile.name)
-        formData.append("restaurantname", restaurantName);
-
-        // Details of the uploaded file 
-        console.log(this.state.selectedFile);
-
-        //Make a call to the Spring Boot Application to save the image
-        ApiService.uploadImage(formData)
-            .then(res => {
-                if (res.status === 200) {
-                    this.setState({ url: res.data })
-                    console.log("res" + res.data)
-                    alert('image uploaded successfully...')
-                }
-
-            }).catch(error => console.log(error))
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
 
 
-    };
 
-    // fileData = () => {
-
-    //     if (this.state.selectedFile) {
-
-    //         return (
-    //             <div>
-    //                 <h2>File Details:</h2>
-    //                 <p>File Name: {this.state.selectedFile.name}</p>
-    //                 <p>File Type: {this.state.selectedFile.type}</p>
-
-    //                 <p>
-    //                     Last Modified:{" "}
-    //                     {this.state.selectedFile.lastModifiedDate.toDateString()}
-    //                 </p>
-    //             </div>
-    //         );
-    //     } else {
-    //         return (
-    //             <div>
-    //                 <br />
-    //                 <h4>Choose before Pressing the Upload button</h4>
-    //             </div>
-    //         );
-    //     }
-    // };
-
-
+    //called on set opentime
     onopentimeChange = (e, time, timeString) => {
 
 
         this.setState({ OpenTime: time }, () => console.log("open time :" + this.state.OpenTime))
 
     }
-
+    //called on close time
     onclosetimeChange = (e, time, timeString) => {
 
 
         this.setState({ CloseTime: time }, () => console.log("close time :" + this.state.CloseTime))
-        //}
+
     }
 
-
+    //called on changing the input field value
     onchange = (e) => {
         this.setState({ [e.target.name]: e.target.value })
 
@@ -150,7 +96,7 @@ export class AddRestaurantDetails extends Component {
         var name = e.target.name;
 
 
-        console.log(value)
+        //perform validation on form to before submit 
         switch (name) {
             case 'RestaurantName':
                 {
@@ -238,21 +184,23 @@ export class AddRestaurantDetails extends Component {
     }
 
 
-
+    //called on submitting the form
     HandleSubmit = (e) => {
         e.preventDefault();
         if (this.state.isValid) {
             console.log(this.state.isValid)
-            //add data to database
+
             const data = {
                 name: this.state.RestaurantName,
                 address: this.state.Address,
                 opentime: this.state.OpenTime,
                 closetime: this.state.CloseTime,
                 phnno: this.state.PhoneNo,
-                restaurant_img: this.state.url
+                restaurant_img: this.state.Restaurant_img,
+                menu_img: this.state.Menu
 
             }
+            //called API to add data of restaurant to database
             ApiService.addRestaurant(data).then(res => {
                 if (res.status == 200) {
                     console.log(res.data)
@@ -270,7 +218,7 @@ export class AddRestaurantDetails extends Component {
             })
         }
         else {
-            alert('please fill all details')
+            alert('please fill all valid  details')
             console.log(this.state.isValid)
         }
 
@@ -348,12 +296,23 @@ export class AddRestaurantDetails extends Component {
                             <div class="form-group row">
                                 <label class="col-form-label col-4">Restaurant Image</label>
                                 <div class="col-6">
-                                    <input type="file" onChange={this.onFileChangeHandler} />
+                                    <input type="file" onChange={(e) => this.onFileChangeHandler1(e, this.state.RestaurantName)} />
                                     <pre style={{ color: 'red' }}>{this.state.error.Restaurant_imgError}</pre>
-                                    <button onClick={(e) => this.onUpload(e, this.state.RestaurantName)}>Upload image</button>
+                                    {/* <button onClick={(e) => this.onUpload(e, this.state.RestaurantName)}>Upload image</button> */}
                                 </div>
                                 {/* {this.fileData()} */}
                             </div>
+
+                            <div class="form-group row">
+                                <label class="col-form-label col-4">Restaurant Menu</label>
+                                <div class="col-6">
+                                    <input type="file" onChange={(e) => this.onFileChangeHandler2(e, this.state.Menu)} />
+                                    <pre style={{ color: 'red' }}>{this.state.error.MenuError}</pre>
+                                    {/* <button onClick={(e) => this.onUpload(e, this.state.RestaurantName)}>Upload image</button> */}
+                                </div>
+                                {/* {this.fileData()} */}
+                            </div>
+
 
 
 

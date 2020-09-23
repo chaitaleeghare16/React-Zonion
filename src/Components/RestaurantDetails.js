@@ -61,7 +61,7 @@ export class RestaurantDetails extends Component {
 
                     {console.log("REstaurant Details : " + this.state.restaurantDetails.name)}
 
-                    <img src="file:///Users/yogesh/Documents/WishTreeAssignment/zonion/public/sentosa.jpg" />
+
 
                     <div className="box" style={{ marginLeft: '130px', marginTop: '60px', textAlign: 'center', backgroundColor: 'lightgrey', width: '80%' }}>
 
@@ -104,7 +104,7 @@ export class RestaurantDetails extends Component {
                                 <input type="text" className="form-control" name="PhoneNo" value={restaurantDetails.phnno} onChange={this.onchange} required="required" />
                             </div>
                         </div>
-
+                        <img src={restaurantDetails.menu_img} />
                     </div>
 
                 </div>

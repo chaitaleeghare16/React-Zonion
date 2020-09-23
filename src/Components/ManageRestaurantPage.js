@@ -9,6 +9,7 @@ import UpdateRestaurant from './UpdateRestaurant'
 export class ManageRestaurantPage extends Component {
     constructor(props) {
         super(props)
+        //get admintoken to check whethre admin is login or not 
         var admintoken = sessionStorage.getItem('admintoken')
         this.state = {
             restaurantDetails: [],
@@ -17,13 +18,15 @@ export class ManageRestaurantPage extends Component {
 
         }
     }
+    //onClick of edit button admin redirect to UpdateRestaurant component 
+    //show existing details of restaurant and admin can edit specific restaurant details
     HandleEdit = (id) => {
         var id = id
         this.props.history.push(`/updaterestaurant/${id}`)
 
     }
 
-
+    //called on deleting restaurant record
     HandleDelete = (event, id) => {
         event.preventDefault();
         window.location.reload();
@@ -31,7 +34,7 @@ export class ManageRestaurantPage extends Component {
         if (this.state.isAdminLoggedIn) {
             ApiService.deleteRestaurantById(id).then(res => {
                 if (res.status === 200) {
-                    alert('deleted....')
+                    alert('Restaurant record deleted....')
                 }
             }).catch(error => console.log(error))
         }
@@ -40,8 +43,10 @@ export class ManageRestaurantPage extends Component {
 
     componentDidMount() {
         if (this.state.isAdminLoggedIn) {
+            //call API to get restaurant details
             ApiService.getRestaurant().then(res => {
                 if (res.status === 200) {
+                    //in response restaurant details save to state restaurantDetails
                     this.setState({ restaurantDetails: res.data })
                     console.log(this.state.restaurantDetails)
                 }
@@ -49,7 +54,8 @@ export class ManageRestaurantPage extends Component {
         }
     }
     render() {
-        if (this.state.isAdminLoggedIn) {
+        //show restaurant details only when admin is logged in
+        if (this.state.isAdminLoggedIn) { //check admin is logged in or not
             return (
                 <div>
                     <div><Header /></div>
@@ -79,7 +85,7 @@ export class ManageRestaurantPage extends Component {
                         {
                             this.state.restaurantDetails == null ? 'Details not available' : this.state.restaurantDetails.map(data => (
                                 <tr key={data.id}>
-                                    <td></td>
+                                    <td>{data.id}</td>
                                     <td>{data.name}</td>
                                     <td>{data.opentime}</td>
                                     <td>{data.closetime}</td>
@@ -104,6 +110,7 @@ export class ManageRestaurantPage extends Component {
                 </div>
             )
         } else {
+            //if admin is not logged in show message
             return <div style={{ textAlign: 'center' }}>
                 <h2 style={{ color: 'red' }}>Only Admin Can Access !!!</h2>
             </div>

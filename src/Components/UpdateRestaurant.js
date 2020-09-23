@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import Header from './Header'
-
 import ApiService from '../Service/ApiService'
 import { TimePicker } from 'antd';
 import moment from 'moment';
 import 'antd/dist/antd.css';
+import { number } from 'prop-types';
 
 
 export class UpdateRestaurant extends Component {
@@ -25,6 +25,8 @@ export class UpdateRestaurant extends Component {
             OpenTime: '',
             CloseTime: '',
             PhoneNo: '',
+            Restaurant_img: "",
+            Menu: "",
             isValid: true,
             isLoaded: false,
             error: {
@@ -33,7 +35,8 @@ export class UpdateRestaurant extends Component {
                 OpenTimeError: '',
                 CloseTimeError: '',
                 PhoneNoError: '',
-                Restaurant_imgError: ''
+                Restaurant_imgError: '',
+                MenuError: ''
             }
             , Restaurant_img: "",
             restaurantDetails: {},
@@ -45,63 +48,40 @@ export class UpdateRestaurant extends Component {
 
 
     }
-    onFileChangeHandler = (event) => {
+    //called on choosing of image  file
+    onFileChangeHandler1 = (event, restaurantname) => {
         event.preventDefault();
         //Select File
+
         if (event.target.files && event.target.files[0]) {
-            this.setState({
-                //url: URL.createObjectURL(event.target.files[0])
-                selectedFile: event.target.files[0]
-            }, () => console.log("on file handler " + this.state.selectedFile));
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.setState({ Restaurant_img: e.target.result }, () => console.log(this.state.Restaurant_img));
+
+            }
+            reader.readAsDataURL(event.target.files[0]);
         }
-
-
-
     }
 
 
-    onUpload = (e, restaurantname) => {
-        e.preventDefault();
+    onFileChangeHandler2 = (event, restaurantname) => {
+        event.preventDefault();
+        //Select File
 
-        console.log("inside upload :" + this.state.isValid)
-        var restaurantName = restaurantname;
-        console.log("restaurant name :" + restaurantName)
-        //FormData API provides methods and properties to allow us easily prepare form data to be sent with POST HTTP requests.
-        // Create an object of formData 
+        if (event.target.files && event.target.files[0]) {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.setState({ Menu: e.target.result }, () => console.log(this.state.Menu));
 
-        const formData = new FormData();
 
-        // Update the formData object 
-        var file = this.state.selectedFile
-        if (file == null) {
-            return this.setState({ error: { Restaurant_imgError: 'please choose file to upload' } });
-        } else {
-            formData.append(
-                "myFile",
-                this.state.selectedFile,
-                this.state.selectedFile.name
-            )
-        };
-        formData.append("filename", this.state.selectedFile.name)
-        formData.append("restaurantname", restaurantName);
 
-        // Details of the uploaded file 
-        console.log(this.state.selectedFile);
+            }
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
 
-        //Make a call to the Spring Boot Application to save the image
-        ApiService.uploadImage(formData)
-            .then(res => {
-                if (res.status === 200) {
-                    this.setState({ Restaurant_img: res.data })
 
-                    console.log("res" + res.data)
-                    alert('image uploaded successfully...')
-                }
 
-            }).catch(error => console.log(error))
-        console.log("Image......" + this.state.Restaurant_img
-        )
-    };
 
 
 
@@ -195,6 +175,21 @@ export class UpdateRestaurant extends Component {
 
         return this.state.isValid;
     }
+    //call on change of open time
+    onopentimeChange = (e, time, timeString) => {
+
+
+        this.setState({ OpenTime: time }, () => console.log("open time :" + this.state.OpenTime))
+
+    }
+    //call on close time
+    onclosetimeChange = (e, time, timeString) => {
+
+
+        this.setState({ CloseTime: time }, () => console.log("close time :" + this.state.CloseTime))
+
+    }
+
 
     HandleSubmit = (e) => {
         console.log(this.state.RestaurantName)
@@ -212,7 +207,8 @@ export class UpdateRestaurant extends Component {
                 opentime: this.state.OpenTime,
                 closetime: this.state.CloseTime,
                 phnno: this.state.PhoneNo,
-                restaurant_img: this.state.Restaurant_img
+                restaurant_img: this.state.Restaurant_img,
+                menu_img: this.state.Menu
 
             }
             ApiService.updateRestaurantById(data).then(res => {
@@ -253,7 +249,8 @@ export class UpdateRestaurant extends Component {
                     OpenTime: res.data.opentime,
                     CloseTime: res.data.closetime,
                     PhoneNo: res.data.phnno,
-                    Restaurant_img: res.data.restaurant_img
+                    Restaurant_img: res.data.restaurant_img,
+                    Menu: res.data.menu_img
 
                 })
 
@@ -272,8 +269,31 @@ export class UpdateRestaurant extends Component {
             }
             console.log("inside render " + this.state.restaurantDetails)
 
-            var closetime = this.state.restaurantDetails.closetime
-            console.log("closetime is " + closetime)
+            var closetime = this.state.CloseTime
+            console.log("closetime is *****" + closetime)
+
+            var closetime = closetime.split(":")
+            var closedaytime = moment('2017-08-1');
+
+            closedaytime.set(
+                {
+                    hours: closetime[0],
+                    minutes: closetime[1]
+                })
+            console.log("closedaytime time - " + closedaytime)
+            var opentime = this.state.OpenTime
+            var opentime = opentime.split(":")
+            var opendaytime = moment('2017-08-1');
+
+            opendaytime.set(
+                {
+                    hours: opentime[0],
+                    minutes: opentime[1]
+                })
+            console.log("opendaytime time - " + opendaytime)
+
+
+
             if (this.state.isLoaded) {
                 return (
                     <div>
@@ -309,8 +329,9 @@ export class UpdateRestaurant extends Component {
                                             onChange={this.onopentimeChange}
                                             format="HH:mm"
                                             name="OpenTime"
-                                            defaultValue={moment('00:00', 'HH:mm')} />
-                                        <span>{this.state.OpenTime} </span>
+                                            value={opendaytime}
+                                        />
+
                                     </div>
                                 </div>
                                 <pre style={{ color: 'red' }}>{this.state.error.OpenTimeError}</pre>
@@ -325,10 +346,9 @@ export class UpdateRestaurant extends Component {
                                             onChange={this.onclosetimeChange}
                                             name="CloseTime"
                                             format="HH:mm"
-                                            defaultValue={moment('00:00', 'HH:mm')}
-
+                                            value={closedaytime}
                                         />
-                                        <span>{this.state.CloseTime} </span>
+
 
 
                                     </div>
@@ -353,9 +373,20 @@ export class UpdateRestaurant extends Component {
                                 <div class="form-group row">
                                     <label class="col-form-label col-4">Restaurant_Image</label>
                                     <div class="col-6">
-                                        <input type="file" name="Restaurant_img" onChange={(event) => this.onFileChangeHandler(event)} />
+                                        <input type="file" onChange={(event) => this.onFileChangeHandler1(event)} />
                                         <pre style={{ color: 'red' }}>{this.state.error.Restaurant_imgError}</pre>
-                                        <button onClick={(e) => this.onUpload(e, this.state.RestaurantName)}>Upload image</button>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group row">
+                                    <label class="col-form-label col-4">Restaurant_Menu</label>
+                                    <div class="col-6">
+                                        <input type="file" onChange={(event) => this.onFileChangeHandler2(event)} />
+                                        <pre style={{ color: 'red' }}>{this.state.error.MenuError}</pre>
+
                                     </div>
 
                                 </div>
