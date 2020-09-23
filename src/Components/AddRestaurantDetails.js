@@ -187,7 +187,12 @@ export class AddRestaurantDetails extends Component {
     //called on submitting the form
     HandleSubmit = (e) => {
         e.preventDefault();
-        if (this.state.isValid) {
+
+        var isMandatory = false
+        if (this.state.RestaurantName && this.state.Address && this.state.PhoneNo && this.state.Menu) {
+            isMandatory = true;
+        }
+        if (this.state.isValid && isMandatory) {
             console.log(this.state.isValid)
 
             const data = {

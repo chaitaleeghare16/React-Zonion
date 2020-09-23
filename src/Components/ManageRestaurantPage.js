@@ -85,7 +85,7 @@ export class ManageRestaurantPage extends Component {
                         {
                             this.state.restaurantDetails == null ? 'Details not available' : this.state.restaurantDetails.map(data => (
                                 <tr key={data.id}>
-                                    <td>{data.id}</td>
+                                    <td></td>
                                     <td>{data.name}</td>
                                     <td>{data.opentime}</td>
                                     <td>{data.closetime}</td>

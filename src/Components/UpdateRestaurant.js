@@ -192,12 +192,16 @@ export class UpdateRestaurant extends Component {
 
 
     HandleSubmit = (e) => {
-        console.log(this.state.RestaurantName)
-        console.log(this.state.Restaurant_img)
+
         e.preventDefault();
         //add data
-        console.log("insid submit" + this.state.isValid)
-        if (this.state.isValid) {
+
+        var isMandatory = false
+        if (this.state.RestaurantName && this.state.Address && this.state.PhoneNo && this.state.Menu) {
+            isMandatory = true;
+        }
+        if (this.state.isValid && isMandatory) {
+
 
             console.log("inside submit " + this.state.isValid)
             const data = {
@@ -222,10 +226,11 @@ export class UpdateRestaurant extends Component {
             this.setState({
                 RestaurantName: '',
                 Address: '',
-                OpenTime: '',
-                CloseTime: '',
+                OpenTime: '00:00',
+                CloseTime: '00:00',
                 PhoneNo: '',
-                Restaurant_img: ''
+                Restaurant_img: '',
+                Menu: ''
             })
         }
         else {

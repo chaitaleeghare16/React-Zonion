@@ -77,7 +77,7 @@ export class RestaurantDetails extends Component {
                         <div className="form-group row">
                             <label className="col-form-label col-4"> Address</label>
                             <div className="col-6">
-                                <input type="text" className="form-control" name="Address" value={restaurantDetails.address} onChange={this.onchange} required="required" />
+                                <textarea className="form-control" name="Address" value={restaurantDetails.address} onChange={this.onchange} required="required" />
                             </div>
                         </div>
 
