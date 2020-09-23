@@ -98,9 +98,16 @@ export class UpdateRestaurant extends Component {
             case 'RestaurantName':
                 {
                     if (value.length == 0) {
-                        this.setState({ error: { RestaurantNameError: 'restaurant name should not be empty' }, isValid: false })
+                        this.setState({
+                            error:
+                                { RestaurantNameError: 'restaurant name should not be empty' },
+                            isValid: false
+                        })
 
+                    } else if (!value.match(/^[a-zA-Z0-9]{1,}$/)) {
+                        this.setState({ error: { RestaurantNameError: "name should not contain special characters" }, isValid: false })
                     }
+
                     else {
                         this.setState({ error: { RestaurantNameError: '' }, isValid: true })
 

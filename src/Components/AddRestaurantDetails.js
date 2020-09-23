@@ -105,6 +105,10 @@ export class AddRestaurantDetails extends Component {
 
 
                     }
+                    else if (!value.match(/^[a-zA-Z0-9]{1,}$/)) {
+                        this.setState({ error: { RestaurantNameError: "name should not contain special characters" }, isValid: false })
+                    }
+
                     else {
                         this.setState({ error: { RestaurantNameError: '' }, isValid: true })
 
